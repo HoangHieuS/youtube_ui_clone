@@ -38,6 +38,7 @@ dependencies:
   miniplayer: ^1.0.1
   timeago: ^3.2.2
   fluttericon: ^2.0.0
+  material_design_icons_flutter: ^5.0.6595
 
 dev_dependencies:
   flutter_test:

@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:miniplayer/miniplayer.dart';
 import 'package:youtube_ui_clone/data.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:youtube_ui_clone/screens/screens.dart';
 
-class VideoCard extends ConsumerWidget  {
+class VideoCard extends ConsumerWidget {
   final Video video;
+  final bool hasPadding;
+  final VoidCallback? onTap;
 
   const VideoCard({
     Key? key,
     required this.video,
+    this.hasPadding = false,
+    this.onTap,
   }) : super(key: key);
 
   @override
@@ -17,20 +22,28 @@ class VideoCard extends ConsumerWidget  {
     return GestureDetector(
       onTap: () {
         ref.read(selectedVideoProvider.state).state = video;
+        ref
+            .read(miniPlayerControllerProvider.state)
+            .state
+            .animateToHeight(state: PanelState.MAX);
+        if (onTap != null) onTap!();
       },
       child: Column(
         children: [
           Stack(
             children: [
-              Image.network(
-                video.thumbnailUrl,
-                height: 220,
-                width: double.infinity,
-                fit: BoxFit.cover,
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: hasPadding ? 12 : 0),
+                child: Image.network(
+                  video.thumbnailUrl,
+                  height: 220,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                ),
               ),
               Positioned(
                 bottom: 8,
-                right: 8,
+                right: hasPadding ? 20 : 8,
                 child: Container(
                   padding: const EdgeInsets.all(4),
                   color: Colors.black,
@@ -70,7 +83,7 @@ class VideoCard extends ConsumerWidget  {
                           overflow: TextOverflow.ellipsis,
                           style: Theme.of(context)
                               .textTheme
-                              .bodySmall!
+                              .bodyText1!
                               .copyWith(fontSize: 15),
                         ),
                       ),
