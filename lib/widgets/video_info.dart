@@ -119,7 +119,7 @@ class _ActionsRow extends StatelessWidget {
   }
 }
 
-class _AuthorInfo extends StatelessWidget {
+class _AuthorInfo extends StatefulWidget {
   final User user;
 
   const _AuthorInfo({
@@ -128,13 +128,19 @@ class _AuthorInfo extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  State<_AuthorInfo> createState() => _AuthorInfoState();
+}
+
+class _AuthorInfoState extends State<_AuthorInfo> {
+  bool isSubscribed = false;
+  @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {},
       child: Row(
         children: [
           CircleAvatar(
-            foregroundImage: NetworkImage(user.profileImageUrl),
+            foregroundImage: NetworkImage(widget.user.profileImageUrl),
           ),
           const SizedBox(width: 8),
           Expanded(
@@ -144,7 +150,7 @@ class _AuthorInfo extends StatelessWidget {
               children: [
                 Flexible(
                   child: Text(
-                    user.username,
+                    widget.user.username,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: Theme.of(context)
@@ -155,7 +161,7 @@ class _AuthorInfo extends StatelessWidget {
                 ),
                 Flexible(
                   child: Text(
-                    '${user.subscribers} Subscribers',
+                    '${widget.user.subscribers} Subscribers',
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: Theme.of(context)
@@ -167,17 +173,34 @@ class _AuthorInfo extends StatelessWidget {
               ],
             ),
           ),
-          TextButton(
-            onPressed: () {},
-            child: Text(
-              'SUBSCRIBE',
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyText1!
-                  .copyWith(color: Colors.red),
-            ),
-          ),
+          _subscribeAction(),
+          isSubscribed
+              ? IconButton(
+                  icon: const Icon(MdiIcons.bellOutline),
+                  iconSize: 30,
+                  onPressed: () {},
+                )
+              : const SizedBox.shrink(),
         ],
+      ),
+    );
+  }
+
+  Widget _subscribeAction() {
+    final style = isSubscribed
+        ? Theme.of(context)
+            .textTheme
+            .bodyText1!
+            .copyWith(color: Colors.grey[600])
+        : Theme.of(context).textTheme.bodyText1!.copyWith(color: Colors.red);
+    final label = isSubscribed ? 'SUBSCRIBED' : 'SUBSCRIPTIONED';
+    return TextButton(
+      onPressed: () {
+        setState(() => isSubscribed = !isSubscribed);
+      },
+      child: Text(
+        label,
+        style: style,
       ),
     );
   }
